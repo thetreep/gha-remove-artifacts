@@ -75,16 +75,18 @@ async function run() {
           `Request quota exhausted for request ${options.method} ${options.url}, number of total global retries: ${options.request.retryCount}`
         );
 
-        console.log(`Retrying after ${retryAfter} seconds!`);
+        console.log(`[RateLimit] Retrying after ${retryAfter} seconds!`);
 
         return configs.retriesEnabled;
       },
-      onAbuseLimit: (retryAfter, options) => {
+      onSecondaryRateLimit: (retryAfter, options) => {
         console.error(
-          `Abuse detected for request ${options.method} ${options.url}, retry count: ${options.request.retryCount}`
+          `SecondaryRateLimit detected for request ${options.method} ${options.url}, retry count: ${options.request.retryCount}`
         );
 
-        console.log(`Retrying after ${retryAfter} seconds!`);
+        console.log(
+          `[SecondaryRateLimit] Retrying after ${retryAfter} seconds!`
+        );
 
         return configs.retriesEnabled;
       },
