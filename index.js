@@ -1,8 +1,12 @@
-const core = require("@actions/core");
-const { Octokit } = require("@octokit/action");
-const { throttling } = require("@octokit/plugin-throttling");
-const moment = require("moment");
-const yn = require("yn");
+import * as core from "@actions/core";
+import { Octokit } from "@octokit/action";
+import { throttling } from "@octokit/plugin-throttling";
+import moment from "moment";
+import yn from "yn";
+import * as sms from "source-map-support";
+import * as ds from "dotenv-safe";
+
+sms.install();
 
 const devEnv = process.env.NODE_ENV === "dev";
 
@@ -14,7 +18,7 @@ const inputKeys = {
 
 if (devEnv) {
   // eslint-disable-next-line global-require, import/no-extraneous-dependencies
-  require("dotenv-safe").config();
+  ds.config();
 }
 
 function readInput(key, isRequired = false) {
@@ -58,7 +62,10 @@ function getConfigs() {
       perPage: 100,
     },
     maxAge: moment().subtract(age, units),
-    skipTags: yn(readInput(inputKeys.SKIP_TAGS)),
+    skipTags: yn(readInput(inputKeys.SKIP_TAGS), {
+      default: true,
+      lenient: false,
+    }),
     skipRecent: Number(skipRecent),
     retriesEnabled: true,
   };
